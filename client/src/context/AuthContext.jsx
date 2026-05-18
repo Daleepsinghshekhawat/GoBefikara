@@ -1,69 +1,68 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import { authService } from '../services';
-import toast from 'react-hot-toast';
-
-const AuthContext = createContext(null);
+// Compatibility shim: original Context API replaced by Redux Toolkit.
+// This file keeps the same `useAuth` and `AuthProvider` exports so existing
+// imports in the codebase continue to work while the app uses Redux under the hood.
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import toast from "react-hot-toast";
+import {
+  login as loginThunk,
+  register as registerThunk,
+  getMe as getMeThunk,
+  logout as logoutAction,
+  updateUser as updateUserAction,
+} from "../store/authSlice";
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
+  const dispatch = useDispatch();
   useEffect(() => {
-    const token = localStorage.getItem('gbf_token');
-    const savedUser = localStorage.getItem('gbf_user');
-    if (token && savedUser) {
-      setUser(JSON.parse(savedUser));
-      // Verify token is still valid
-      authService.getMe()
-        .then(({ data }) => setUser(data.user))
-        .catch(() => logout())
-        .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
-    }
-  }, []);
-
-  const login = async (credentials) => {
-    const { data } = await authService.login(credentials);
-    localStorage.setItem('gbf_token', data.token);
-    localStorage.setItem('gbf_user', JSON.stringify(data.user));
-    setUser(data.user);
-    toast.success(`Welcome back, ${data.user.name}! 🎉`);
-    return data;
-  };
-
-  const register = async (userData) => {
-    const { data } = await authService.register(userData);
-    localStorage.setItem('gbf_token', data.token);
-    localStorage.setItem('gbf_user', JSON.stringify(data.user));
-    setUser(data.user);
-    toast.success(`Welcome to Gobefikara, ${data.user.name}! 🚀`);
-    return data;
-  };
-
-  const logout = () => {
-    localStorage.removeItem('gbf_token');
-    localStorage.removeItem('gbf_user');
-    setUser(null);
-    toast.success('Logged out successfully');
-  };
-
-  const updateUser = (updatedUser) => {
-    setUser(updatedUser);
-    localStorage.setItem('gbf_user', JSON.stringify(updatedUser));
-  };
-
-  return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, updateUser, isAuthenticated: !!user }}>
-      {children}
-    </AuthContext.Provider>
-  );
+    // On mount, try to refresh user from server if token exists
+    dispatch(getMeThunk()).catch(() => {});
+  }, [dispatch]);
+  return children;
 };
 
 export const useAuth = () => {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
-  return ctx;
+  const { user, loading } = useSelector((s) => s.auth);
+  const dispatch = useDispatch();
+
+  const login = async (credentials) => {
+    try {
+      const action = await dispatch(loginThunk(credentials));
+      const u = action.payload;
+      toast.success(`Welcome back, ${u.name}! 🎉`);
+      return action;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  const register = async (userData) => {
+    try {
+      const action = await dispatch(registerThunk(userData));
+      const u = action.payload;
+      toast.success(`Welcome to Gobefikara, ${u.name}! 🚀`);
+      return action;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  const logout = () => {
+    dispatch(logoutAction());
+    toast.success("Logged out successfully");
+  };
+
+  const updateUser = (u) => dispatch(updateUserAction(u));
+
+  return {
+    user,
+    loading,
+    login,
+    register,
+    logout,
+    updateUser,
+    isAuthenticated: !!user,
+  };
 };
 
-export default AuthContext;
+export default null;
