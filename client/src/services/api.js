@@ -12,11 +12,16 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle 401 globally
+// Handle 401 globally — but NOT on auth endpoints (login/register)
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401) {
+    const url = err.config?.url || '';
+    const isAuthRoute = url.includes('/auth/login') || url.includes('/auth/register');
+    const hasToken = !!localStorage.getItem('gbf_token');
+
+    // Only force-logout when a protected route gets a 401 (i.e. token expired/invalid)
+    if (err.response?.status === 401 && !isAuthRoute && hasToken) {
       localStorage.removeItem('gbf_token');
       localStorage.removeItem('gbf_user');
       window.location.href = '/login';

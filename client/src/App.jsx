@@ -1,6 +1,8 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { AuthProvider } from './context/AuthContext';
+import { useDispatch } from 'react-redux';
+import { getMe } from './store/authSlice';
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
 import HomePage from './pages/HomePage';
@@ -24,38 +26,45 @@ const NotFound = () => (
   </div>
 );
 
-const App = () => {
-  return (
-    <BrowserRouter>
-      <AuthProvider>
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            style: { background: '#1A1F4B', color: '#F9FAFB', border: '1px solid rgba(255,255,255,0.1)' },
-            success: { iconTheme: { primary: '#10B981', secondary: '#0F1337' } },
-            error: { iconTheme: { primary: '#EF4444', secondary: '#0F1337' } },
-          }}
-        />
-        <Navbar />
-        <main>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/trips" element={<TripsPage />} />
-            <Route path="/trips/:id" element={<TripDetailPage />} />
-            <Route path="/shiv-yatra" element={<ShivYatraPage />} />
-            <Route path="/book/:tripId" element={<BookingPage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </main>
-        <Footer />
-      </AuthProvider>
-    </BrowserRouter>
-  );
+// Restores the logged-in user from localStorage on app start
+const AppInit = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const token = localStorage.getItem('gbf_token');
+    if (token) dispatch(getMe()).catch(() => {});
+  }, [dispatch]);
+  return null;
 };
+
+const App = () => (
+  <BrowserRouter>
+    <AppInit />
+    <Toaster
+      position="top-right"
+      toastOptions={{
+        style: { background: '#1A1F4B', color: '#F9FAFB', border: '1px solid rgba(255,255,255,0.1)' },
+        success: { iconTheme: { primary: '#10B981', secondary: '#0F1337' } },
+        error: { iconTheme: { primary: '#EF4444', secondary: '#0F1337' } },
+      }}
+    />
+    <Navbar />
+    <main>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/trips" element={<TripsPage />} />
+        <Route path="/trips/:id" element={<TripDetailPage />} />
+        <Route path="/shiv-yatra" element={<ShivYatraPage />} />
+        <Route path="/book/:tripId" element={<BookingPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </main>
+    <Footer />
+  </BrowserRouter>
+);
 
 export default App;

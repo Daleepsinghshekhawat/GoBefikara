@@ -1,131 +1,264 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
-const Hero = () => {
-  const stats = [
-    { value: '5000+', label: 'Happy Travelers' },
-    { value: '150+', label: 'Trips Available' },
-    { value: '20+', label: 'Destinations' },
-    { value: '4.9★', label: 'Average Rating' },
-  ];
+/* ── Sacred destinations shown on the right panel ── */
+const SACRED_LIST = [
+  { icon: '🛕', name: 'KEDARNATH',       sub: 'The Abode of Lord Shiva' },
+  { icon: '⛰️', name: 'TUNGNATH',        sub: 'The Highest Shiva Temple' },
+  { icon: '🕌', name: 'KASHI VISHWANATH',sub: 'The Eternal Light' },
+  { icon: '🛕', name: 'BAIDYANATH',      sub: 'The Healer of Souls' },
+  { icon: '✨', name: '& Many More',      sub: 'Sacred Destinations' },
+];
 
-  return (
-    <section style={{ minHeight: '100vh', position: 'relative', display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
-      {/* Animated Background */}
+/* ── Bottom stats bar ── */
+const STATS = [
+  { icon: '👤', value: '5000+', label: 'Happy Yatris' },
+  { icon: '🏔️', value: '150+',  label: 'Trips Available' },
+  { icon: '🛕', value: '20+',   label: 'Sacred Destinations' },
+  { icon: '⭐', value: '4.9★',  label: 'Average Rating' },
+];
+
+const Hero = () => (
+  <section style={{
+    minHeight: '100vh',
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    overflow: 'hidden',
+  }}>
+
+    {/* ── Full-bleed background image ── */}
+    <div style={{
+      position: 'absolute', inset: 0,
+      backgroundImage: `url('https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=1600&auto=format&fit=crop&q=80')`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center top',
+      filter: 'brightness(0.65)',
+      zIndex: 0,
+    }} />
+
+    {/* ── Dark gradient overlay (left-heavy so text pops) ── */}
+    <div style={{
+      position: 'absolute', inset: 0, zIndex: 1,
+      background: 'linear-gradient(105deg, rgba(8,8,20,0.78) 0%, rgba(8,8,20,0.55) 45%, rgba(8,8,20,0.15) 75%, rgba(8,8,20,0.05) 100%)',
+    }} />
+
+    {/* ── Warm amber glow bottom-left ── */}
+    <div style={{
+      position: 'absolute', bottom: '10%', left: '-5%',
+      width: 500, height: 500, borderRadius: '50%',
+      background: 'radial-gradient(circle, rgba(255,107,53,0.18) 0%, transparent 70%)',
+      filter: 'blur(60px)', zIndex: 1, pointerEvents: 'none',
+    }} />
+
+    {/* ────────────────── MAIN CONTENT ────────────────── */}
+    <div style={{
+      position: 'relative', zIndex: 2,
+      flex: 1,
+      display: 'flex',
+      alignItems: 'center',
+      padding: '0',
+    }}>
       <div style={{
-        position: 'absolute', inset: 0,
-        background: 'linear-gradient(135deg, #0F1337 0%, #1A1F4B 35%, #2D1B69 65%, #1A1F4B 100%)',
-      }} />
+        width: '100%', maxWidth: 1280,
+        margin: '0 auto',
+        padding: '7rem 2rem 2rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: '2rem',
+      }}>
 
-      {/* Floating Orbs */}
-      {[
-        { size: 400, top: '-10%', left: '-10%', color: 'rgba(255,107,53,0.12)' },
-        { size: 350, bottom: '-15%', right: '-5%', color: 'rgba(139,92,246,0.1)' },
-        { size: 200, top: '30%', right: '30%', color: 'rgba(244,197,66,0.08)' },
-      ].map((orb, i) => (
-        <div key={i} style={{
-          position: 'absolute', width: orb.size, height: orb.size, borderRadius: '50%',
-          background: `radial-gradient(circle, ${orb.color}, transparent)`,
-          top: orb.top, left: orb.left, bottom: orb.bottom, right: orb.right,
-          filter: 'blur(60px)', pointerEvents: 'none',
-        }} />
-      ))}
+        {/* ── LEFT: Text & CTAs ── */}
+        <div style={{ flex: '0 0 auto', maxWidth: 520 }}>
 
-      {/* Himalaya silhouette */}
-      <div style={{
-        position: 'absolute', bottom: 0, left: 0, right: 0,
-        height: '40%', opacity: 0.06,
-        background: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='white' d='M0,250L80,230L160,200L240,170L320,200L400,150L480,100L560,130L640,80L720,60L800,90L880,110L960,150L1040,120L1120,160L1200,200L1280,220L1360,240L1440,250L1440,320L0,320Z'/%3E%3C/svg%3E") center/cover`,
-        backgroundRepeat: 'no-repeat',
-      }} />
-
-      <div className="container" style={{ position: 'relative', zIndex: 2, paddingTop: '6rem', paddingBottom: '4rem' }}>
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-          style={{ maxWidth: '800px' }}
-        >
+          {/* Badge */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            style={{ display: 'inline-flex', marginBottom: '1.5rem' }}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            style={{ marginBottom: '1.6rem' }}
           >
-            <span className="badge badge-saffron" style={{ fontSize: '0.8rem', padding: '0.4rem 1.2rem' }}>
-              🕉️ Jai Bholenath — The Journey Awaits
+            <span style={{
+              display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+              padding: '0.45rem 1.25rem',
+              border: '1px solid rgba(255,107,53,0.5)',
+              borderRadius: 9999,
+              fontSize: '0.75rem', fontFamily: 'Outfit', fontWeight: 700,
+              textTransform: 'uppercase', letterSpacing: '0.08em',
+              color: '#FF8C5C',
+              background: 'rgba(255,107,53,0.1)',
+            }}>
+              🕉️ Shiv Yatra — The Divine Journey
             </span>
           </motion.div>
 
+          {/* Headline */}
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-            style={{ fontFamily: 'Outfit', fontSize: 'clamp(3rem, 7vw, 5.5rem)', fontWeight: 900, lineHeight: 1.05, marginBottom: '1.5rem', color: '#fff' }}
+            transition={{ delay: 0.15, duration: 0.75 }}
+            style={{
+              fontFamily: 'Outfit',
+              fontSize: 'clamp(2.8rem, 5.5vw, 5rem)',
+              fontWeight: 900,
+              lineHeight: 1.08,
+              color: '#fff',
+              marginBottom: '1.5rem',
+            }}
           >
-            Travel{' '}
-            <span className="text-gradient">Fearlessly</span>,<br />
-            Discover{' '}
-            <span style={{ color: '#F4C542' }}>Endlessly</span>
+            Walk the Path of{' '}<br />
+            <span style={{
+              background: 'linear-gradient(135deg, #FF6B35, #FF8C5C)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}>Shiva.</span>{' '}Find Your<br />
+            <span style={{
+              background: 'linear-gradient(135deg, #F4C542, #FFD97A)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}>True</span>{' '}Self.
           </motion.h1>
 
+          {/* Sub-text */}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.7 }}
-            style={{ fontSize: '1.2rem', color: '#CBD5E1', lineHeight: 1.8, maxWidth: '580px', marginBottom: '2.5rem' }}
+            transition={{ delay: 0.35, duration: 0.7 }}
+            style={{
+              fontSize: '1rem',
+              color: 'rgba(255,255,255,0.72)',
+              lineHeight: 1.75,
+              marginBottom: '2.5rem',
+              maxWidth: 420,
+            }}
           >
-            Trek sacred peaks, join group adventures, walk ancient pilgrim paths — from the Himalayas to Rameshwaram. Your next epic story starts here.
+            Explore the most sacred Shiv temples across the Himalayas.
+            Ancient energy. Eternal peace. Your spiritual awakening begins here.
           </motion.p>
 
+          {/* CTA Buttons */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7, duration: 0.6 }}
-            style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '4rem' }}
+            transition={{ delay: 0.5, duration: 0.6 }}
+            style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}
           >
-            <Link to="/trips" className="btn-primary" style={{ fontSize: '1rem', padding: '0.9rem 2.5rem' }}>
-              🏔️ Explore Trips
-            </Link>
-            <Link to="/shiv-yatra" className="btn-outline" style={{ fontSize: '1rem', padding: '0.9rem 2.5rem' }}>
-              🕉️ Shiv Yatra
+            {/* Primary – solid saffron */}
+            <Link to="/shiv-yatra" style={{
+              display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+              padding: '0.85rem 2rem',
+              background: 'linear-gradient(135deg, #FF6B35, #F4C542)',
+              color: '#0F1337',
+              fontFamily: 'Outfit', fontWeight: 800, fontSize: '0.85rem',
+              textTransform: 'uppercase', letterSpacing: '0.06em',
+              borderRadius: 9999, textDecoration: 'none',
+              transition: 'all 0.3s',
+              boxShadow: '0 6px 24px rgba(255,107,53,0.4)',
+            }}
+              onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+              onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+            >
+              🛕 Explore Shiv Yatra
             </Link>
           </motion.div>
+        </div>
 
-          {/* Stats */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1, duration: 0.6 }}
-            style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem' }}
-          >
-            {stats.map((stat, i) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1 + i * 0.1 }}
-              >
-                <div style={{ fontFamily: 'Outfit', fontSize: '1.8rem', fontWeight: 800, color: '#FF6B35' }}>{stat.value}</div>
-                <div style={{ fontSize: '0.8rem', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{stat.label}</div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </motion.div>
-
-        {/* Scroll indicator */}
+        {/* ── RIGHT: Sacred Destinations panel ── */}
         <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-          style={{ position: 'absolute', bottom: '2rem', left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}
-          onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.6, duration: 0.75 }}
+          style={{
+            flex: '0 0 auto',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 0,
+            position: 'relative',
+          }}
         >
-          <span style={{ color: '#9CA3AF', fontSize: '0.75rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Scroll</span>
-          <div style={{ width: '1px', height: '40px', background: 'linear-gradient(to bottom, #FF6B35, transparent)' }} />
+          {SACRED_LIST.map((item, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.85rem', position: 'relative' }}>
+              {/* Vertical timeline line + dot */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
+                {/* Dot */}
+                <div style={{
+                  width: 34, height: 34, borderRadius: '50%',
+                  background: 'rgba(20,16,40,0.7)',
+                  border: '1px solid rgba(255,255,255,0.18)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '1rem',
+                  backdropFilter: 'blur(6px)',
+                  flexShrink: 0,
+                  zIndex: 1,
+                }}>
+                  {item.icon}
+                </div>
+                {/* connector line */}
+                {i < SACRED_LIST.length - 1 && (
+                  <div style={{
+                    width: 1,
+                    height: 38,
+                    background: 'linear-gradient(to bottom, rgba(255,140,92,0.5), rgba(255,140,92,0.15))',
+                  }} />
+                )}
+              </div>
+
+              {/* Text */}
+              <div style={{ paddingTop: '0.45rem', paddingBottom: i < SACRED_LIST.length - 1 ? '0.5rem' : 0 }}>
+                <div style={{
+                  fontFamily: 'Outfit', fontWeight: 700, fontSize: '0.8rem',
+                  color: '#fff', letterSpacing: '0.07em', textTransform: 'uppercase',
+                }}>
+                  {item.name}
+                </div>
+                <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)', marginTop: '0.15rem' }}>
+                  {item.sub}
+                </div>
+              </div>
+            </div>
+          ))}
         </motion.div>
+
       </div>
-    </section>
-  );
-};
+    </div>
+
+    {/* ────────────────── STATS BAR ────────────────── */}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.85, duration: 0.6 }}
+      style={{
+        position: 'relative', zIndex: 2,
+        background: 'rgba(10,8,25,0.82)',
+        backdropFilter: 'blur(16px)',
+        borderTop: '1px solid rgba(255,255,255,0.08)',
+      }}
+    >
+      <div style={{
+        maxWidth: 1280, margin: '0 auto',
+        padding: '1.4rem 2rem',
+        display: 'flex',
+        justifyContent: 'space-around',
+        flexWrap: 'wrap',
+        gap: '1.5rem',
+      }}>
+        {STATS.map((s, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.9rem' }}>
+            <span style={{ fontSize: '1.6rem', opacity: 0.85 }}>{s.icon}</span>
+            <div>
+              <div style={{
+                fontFamily: 'Outfit', fontWeight: 800,
+                fontSize: '1.5rem', color: '#fff', lineHeight: 1,
+              }}>{s.value}</div>
+              <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', marginTop: '0.2rem' }}>{s.label}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </motion.div>
+
+  </section>
+);
 
 export default Hero;

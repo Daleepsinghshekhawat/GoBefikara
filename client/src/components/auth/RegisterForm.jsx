@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useAuth } from '../../context/AuthContext';
+import useAuth from '../../store/useAuth';
 import toast from 'react-hot-toast';
 
 const RegisterForm = () => {
@@ -20,7 +20,7 @@ const RegisterForm = () => {
       await register(form);
       navigate('/');
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Registration failed.');
+      toast.error(err.message || 'Registration failed.');
     } finally {
       setLoading(false);
     }
